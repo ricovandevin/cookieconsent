@@ -24,6 +24,24 @@ function cookieconsent_help($route_name, RouteMatchInterface $route_match) {
 }
 
 /**
+ * Implements hook_menu().
+ */
+function cookieconsent_menu() {
+  $items = array();
+
+  $items['admin/config/system/cookieconsent'] = array(
+    'title' => t('Cookie settings'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('cookieconsent_settings_form'),
+    'access arguments' => array('administer cookieconsent settings'),
+    'file' => 'includes/cookieconsent.admin.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  return $items;
+}
+
+/**
  * Implements hook_theme().
  */
 function cookieconsent_theme($existing, $type, $theme, $path) {
