@@ -197,88 +197,91 @@ function cookieconsent_library() {
 }
 
 /**
- * Implements hook_page_attachments().
+ * Implements hook_page_alter().
  */
-function cookieconsent_page_attachments(array &$attachments) {
+function cookieconsent_page_alter(&$page) {
+  global $cookie_domain;
+
   // Does the popup has to be shown for this user?
-  $current_user = \Drupal::currentUser();
-  $exclude_from_consent = $current_user->hasPermission('exclude from cookieconsent');
+  $exclude_from_consent = user_access('exclude from cookieconsent');
 
   // If not then proceed.
   if (!$exclude_from_consent) {
-    $config = \Drupal::config('cookieconsent.settings');
-
     // Add the CookieConsent options.
-    $attachments['#attached']['library'][] = 'cookieconsent/settings';
+    drupal_add_library('cookieconsent', 'settings');
 
-    if ($config->get('customise')) {
+    if (variable_get('cookieconsent_customise')) {
       // Set our custom texts.
-      $attachments['#attached']['drupalSettings']['cookieconsent']['message'] = $config->get('headline_text');
-      $attachments['#attached']['drupalSettings']['cookieconsent']['dismiss'] = $config->get('accept_button_text');
-      $attachments['#attached']['drupalSettings']['cookieconsent']['learnMore'] = $config->get('read_more_button_text');
+      drupal_add_js(array(
+        'cookieconsent' => array(
+          'message' => variable_get('cookieconsent_headline_text'),
+          'dismiss' => variable_get('cookieconsent_accept_button_text'),
+          'learnMore' => variable_get('cookieconsent_read_more_button_text'),
+        ),
+      ), 'setting');
     }
 
-    $node_id = $config->get('cookie_policy');
-    $alias = \Drupal::service('path.alias_manager')->getAliasByPath('/node/'.$node_id);
-    $attachments['#attached']['drupalSettings']['cookieconsent']['link'] = $alias;
-
-    $attachments['#attached']['drupalSettings']['cookieconsent']['path'] = $config->get('path');
-    $attachments['#attached']['drupalSettings']['cookieconsent']['expiry'] = $config->get('expiry');
-    $attachments['#attached']['drupalSettings']['cookieconsent']['target'] = $config->get('target');
-
-    // Set the cookie domain.
-    /** @var \Drupal\Core\Session\SessionConfiguration $session_confguration */
-    $session_configuration = \Drupal::service('session_configuration');
-    $session_configuration_options = $session_configuration->getOptions(\Drupal::request());
-
-    $attachments['#attached']['drupalSettings']['cookieconsent']['domain'] = $session_configuration_options['cookie_domain'];
+    drupal_add_js(array(
+      'cookieconsent' => array(
+        'link' => variable_get('cookieconsent_cookie_policy'),
+        'path' => variable_get('cookieconsent_path'),
+        'expiry' => variable_get('cookieconsent_expiry'),
+        'target' => variable_get('cookieconsent_target'),
+        'domain' => $cookie_domain,
+      ),
+    ), 'setting');
 
     // Render the template and pass it over to our javascript.
-    /** @var Drupal\Core\Render\Renderer $renderer */
-    $renderer = \Drupal::service('renderer');
-    $element = [
+    $element = array(
       '#theme' => 'cookieconsent',
-      '#dismiss' => $config->get('accept_button_text'),
-      '#message' => $config->get('headline_text'),
-      '#target' => $config->get('target'),
+      '#dismiss' => variable_get('cookieconsent_accept_button_text'),
+      '#message' => variable_get('cookieconsent_headline_text'),
+      '#target' => variable_get('cookieconsent_target'),
       '#link' => $alias,
-      '#learn_more' => $config->get('read_more_button_text'),
-    ];
-    /** @var Drupal\Core\Render\Markup $markup */
-    $markup = $renderer->renderRoot($element);
+      '#learn_more' => variable_get('cookieconsent_read_more_button_text'),
+    );
+    $markup = drupal_render($element);
 
-    // Cast to string (Uses the magic __toString method).
-    $attachments['#attached']['drupalSettings']['cookieconsent']['markup'] = (string) $markup;
+    drupal_add_js(array(
+      'cookieconsent' => array(
+        'markup' => (string) $markup,
+      ),
+    ), 'setting');
 
     // Determine if a container is used.
-    $container = $config->get('container');
-    if (!empty($container)) {
-      $attachments['#attached']['drupalSettings']['cookieconsent']['container'] = $config->get('container');
-    }
-    else {
-      $attachments['#attached']['drupalSettings']['cookieconsent']['container'] = NULL;
-    }
+    $container = variable_get('cookieconsent_container');
+    $container = empty($container) ? variable_get('cookieconsent_container') : NULL;
+    drupal_add_js(array(
+      'cookieconsent' => array(
+        'container' => $container,
+      ),
+    ), 'setting');
 
     // Determine what theme to use.
-    $theme = $config->get('theme');
-
+    $theme = variable_get('cookieconsent_theme');
     if ($theme === 'none') {
-      $attachments['#attached']['drupalSettings']['cookieconsent']['theme'] = $config->get('theme_path');
+      $theme_path = variable_get('cookieconsent_theme_path');
     }
     else {
       // Add our CSS library that contains the CSS of the chosen theme
-      // (see cookieconsent.libraries.yml).
-      $attachments['#attached']['library'][] = 'cookieconsent/' . $theme;
+      // (see hook_library()).
+      drupal_add_library('cookieconsent', $theme);
       // Set it to FALSE, so no external theme is being loaded.
-      $attachments['#attached']['drupalSettings']['cookieconsent']['theme'] = FALSE;
+      $theme_path = FALSE;
     }
+    drupal_add_js(array(
+      'cookieconsent' => array(
+        'theme' => $theme_path,
+      ),
+    ), 'setting');
 
     // Add the CookieConsent library itself.
-    if ($config->get('minified')) {
-      $attachments['#attached']['library'][] = 'cookieconsent/cookieconsent-min';
+    if (variable_get('cookieconsent_minified')) {
+      $cookieconsent = 'cookieconsent-min';
     }
     else {
-      $attachments['#attached']['library'][] = 'cookieconsent/cookieconsent';
+      $cookieconsent = 'cookieconsent';
     }
+    drupal_add_library('cookieconsent', $cookieconsent);
   }
 }
