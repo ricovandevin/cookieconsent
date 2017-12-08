@@ -51,7 +51,7 @@ function cookieconsent_menu() {
     'page arguments' => array('cookieconsent_settings_form'),
     'access arguments' => array('administer cookieconsent settings'),
     'file' => 'includes/cookieconsent.admin.inc',
-    'type' => MENU_NORMAL_ITEM,
+    'type' => MENU_LOCAL_TASK,
   );
 
   return $items;
