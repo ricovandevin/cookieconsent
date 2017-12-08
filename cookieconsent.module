@@ -110,17 +110,17 @@ function cookieconsent_variable_info($options) {
  * Implements hook_theme().
  */
 function cookieconsent_theme($existing, $type, $theme, $path) {
-  return [
-    'cookieconsent' => [
-      'variables' => [
+  return array(
+    'cookieconsent' => array(
+      'variables' => array(
         'dismiss' => '',
         'message' => '',
         'target' => '',
         'link' => '',
         'learn_more' => '',
-      ],
-    ],
-  ];
+      ),
+    ),
+  );
 }
 
 /**
