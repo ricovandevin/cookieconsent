@@ -1,0 +1,35 @@
+<?php
+
+/**
+ * @file
+ * Contains cookieconsent.install.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function cookieconsent_install() {
+  variable_set('cookieconsent_minified', 1);
+  variable_set('cookieconsent_headline_text',
+    'This website uses cookies to ensure you get the best experience on our website');
+  variable_set('cookieconsent_accept_button_text', 'Got it!');
+  variable_set('cookieconsent_read_more_button_text', 'More info');
+  variable_set('cookieconsent_theme', 'light-floating');
+  variable_set('cookieconsent_path', '/');
+  variable_set('cookieconsent_expiry', 365);
+  variable_set('cookieconsent_target', '_self');
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function cookieconsent_uninstall() {
+  variable_del('cookieconsent_minified');
+  variable_del('cookieconsent_headline_text');
+  variable_del('cookieconsent_accept_button_text');
+  variable_del('cookieconsent_read_more_button_text');
+  variable_del('cookieconsent_theme');
+  variable_del('cookieconsent_path');
+  variable_del('cookieconsent_expiry');
+  variable_del('cookieconsent_target');
+}
