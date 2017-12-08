@@ -202,88 +202,45 @@ function cookieconsent_library() {
  * Implements hook_page_alter().
  */
 function cookieconsent_page_alter(&$page) {
-  global $cookie_domain;
+  // Add the library CSS.
+  drupal_add_css(
+    'http://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.css',
+    array('type' => 'external')
+  );
 
-  // Does the popup has to be shown for this user?
-  $exclude_from_consent = user_access('exclude from cookieconsent');
+  // Add the library JavaScript.
+  drupal_add_js(
+    'http://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.js',
+    array('type' => 'external')
+  );
 
-  // If not then proceed.
-  if (!$exclude_from_consent) {
-    // Add the CookieConsent options.
-    drupal_add_library('cookieconsent', 'settings');
-
-    if (variable_get('cookieconsent_customise')) {
-      // Set our custom texts.
-      drupal_add_js(array(
-        'cookieconsent' => array(
-          'message' => variable_get('cookieconsent_headline_text'),
-          'dismiss' => variable_get('cookieconsent_accept_button_text'),
-          'learnMore' => variable_get('cookieconsent_read_more_button_text'),
-        ),
-      ), 'setting');
-    }
-
-    drupal_add_js(array(
-      'cookieconsent' => array(
-        'link' => variable_get('cookieconsent_cookie_policy'),
-        'path' => variable_get('cookieconsent_path'),
-        'expiry' => variable_get('cookieconsent_expiry'),
-        'target' => variable_get('cookieconsent_target'),
-        'domain' => $cookie_domain,
-      ),
-    ), 'setting');
-
-    // Render the template and pass it over to our javascript.
-    $element = array(
-      '#theme' => 'cookieconsent',
-      '#dismiss' => variable_get('cookieconsent_accept_button_text'),
-      '#message' => variable_get('cookieconsent_headline_text'),
-      '#target' => variable_get('cookieconsent_target'),
-      '#link' => $alias,
-      '#learn_more' => variable_get('cookieconsent_read_more_button_text'),
-    );
-    $markup = drupal_render($element);
-
-    drupal_add_js(array(
-      'cookieconsent' => array(
-        'markup' => (string) $markup,
-      ),
-    ), 'setting');
-
-    // Determine if a container is used.
-    $container = variable_get('cookieconsent_container');
-    $container = empty($container) ? variable_get('cookieconsent_container') : NULL;
-    drupal_add_js(array(
-      'cookieconsent' => array(
-        'container' => $container,
-      ),
-    ), 'setting');
-
-    // Determine what theme to use.
-    $theme = variable_get('cookieconsent_theme');
-    if ($theme === 'none') {
-      $theme_path = variable_get('cookieconsent_theme_path');
-    }
-    else {
-      // Add our CSS library that contains the CSS of the chosen theme
-      // (see hook_library()).
-      drupal_add_library('cookieconsent', $theme);
-      // Set it to FALSE, so no external theme is being loaded.
-      $theme_path = FALSE;
-    }
-    drupal_add_js(array(
-      'cookieconsent' => array(
-        'theme' => $theme_path,
-      ),
-    ), 'setting');
-
-    // Add the CookieConsent library itself.
-    if (variable_get('cookieconsent_minified')) {
-      $cookieconsent = 'cookieconsent-min';
-    }
-    else {
-      $cookieconsent = 'cookieconsent';
-    }
-    drupal_add_library('cookieconsent', $cookieconsent);
+  // Add the initialization and configuration JavaScript.
+  $config = array();
+  $palette = array();
+  if (variable_get('cookieconsent_popup_background')) {
+    $palette['popup']['background'] = variable_get('cookieconsent_popup_background');
   }
+  if (variable_get('cookieconsent_button_background')) {
+    $palette['button']['background'] = variable_get('cookieconsent_button_background');
+  }
+  if (!empty($palette)) {
+    $config['palette'] = $palette;
+  }
+  if (variable_get('cookieconsent_learn_more_type') == 'own'
+    && !variable_get('cookieconsent_learn_more_link')) {
+    $config['showLink'] = FALSE;
+  }
+  if (variable_get('cookieconsent_type')) {
+    $config['type'] = variable_get('cookieconsent_type');
+  }
+  if (variable_get('cookieconsent_message')) {
+    $config['content']['message'] = variable_get('cookieconsent_message');
+  }
+  if (variable_get('cookieconsent_accept_button_text')) {
+    $config['content']['allow'] = variable_get('cookieconsent_accept_button_text');
+  }
+  drupal_add_js(
+    'window.addEventListener("load", function(){ window.cookieconsent.initialise(' . json_encode($config) . '); });',
+    array('type' => 'inline')
+  );
 }
