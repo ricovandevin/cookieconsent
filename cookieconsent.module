@@ -24,6 +24,22 @@ function cookieconsent_help($route_name, RouteMatchInterface $route_match) {
 }
 
 /**
+ * Implements hook_permission().
+ */
+function cookieconsent_permission() {
+  return array(
+    'administer cookieconsent settings' => array(
+      'title' => t('Administer CookieConsent Settings'),
+      'description' => t('Administer the CookieConsent settings to control the appearance of the popup'),
+    ),
+    'exclude from cookieconsent' => array(
+      'title' => t('Exclude role from CookieConsent'),
+      'description' => t('Control which roles are excluded from seeing the popup'),
+    ),
+  );
+}
+
+/**
  * Implements hook_menu().
  */
 function cookieconsent_menu() {
