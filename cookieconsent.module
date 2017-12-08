@@ -5,15 +5,13 @@
  * Contains cookieconsent.module.
  */
 
-use Drupal\Core\Routing\RouteMatchInterface;
-
 /**
  * Implements hook_help().
  */
-function cookieconsent_help($route_name, RouteMatchInterface $route_match) {
-  switch ($route_name) {
+function cookieconsent_help($path, $arg) {
+  switch ($path) {
     // Main module help for the cookieconsent module.
-    case 'help.page.cookieconsent':
+    case 'admin/help#cookieconsent':
       $output = '';
       $output .= '<h3>' . t('About') . '</h3>';
       $output .= '<p>' . t('CookieConsent uses the Cookie Consent javascript library for alerting users about the use of cookies on your website') . '</p>';
