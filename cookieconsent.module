@@ -126,6 +126,79 @@ function cookieconsent_theme($existing, $type, $theme, $path) {
 }
 
 /**
+ * Implements hook_library().
+ */
+function cookieconsent_library() {
+  $libraries = array();
+
+  $libraries['cookieconsent'] = array(
+    'version' => '1.0.9',
+    'js' => array(
+      drupal_get_path('module', 'cookieconsent') . '/js/cookieconsent.js' => array(),
+    ),
+  );
+
+  $libraries['cookieconsent-min'] = array(
+    'version' => '1.0.9',
+    'js' => array(
+      drupal_get_path('module', 'cookieconsent') . '/js/cookieconsent-min.js' => array(),
+    ),
+  );
+
+  $libraries['settings'] = array(
+    'version' => '1.x',
+    'js' => array(
+      drupal_get_path('module', 'cookieconsent') . '/js/cookieconsent.settings.js' => array(),
+    ),
+    'dependencies' => array('drupal.settings'),
+  );
+
+  $libraries['dark-bottom'] = array(
+    'version' => '1.x',
+    'css' => array(
+      drupal_get_path('module', 'cookieconsent') . '/css/dark-bottom.css' => array(),
+    ),
+  );
+
+  $libraries['dark-floating'] = array(
+    'version' => '1.x',
+    'css' => array(
+      drupal_get_path('module', 'cookieconsent') . '/css/dark-floating.css' => array(),
+    ),
+  );
+
+  $libraries['dark-top'] = array(
+    'version' => '1.x',
+    'css' => array(
+      drupal_get_path('module', 'cookieconsent') . '/css/dark-top.css' => array(),
+    ),
+  );
+
+  $libraries['light-bottom'] = array(
+    'version' => '1.x',
+    'css' => array(
+      drupal_get_path('module', 'cookieconsent') . '/css/light-bottom.css' => array(),
+    ),
+  );
+
+  $libraries['light-floating'] = array(
+    'version' => '1.x',
+    'css' => array(
+      drupal_get_path('module', 'cookieconsent') . '/css/light-floating.css' => array(),
+    ),
+  );
+
+  $libraries['light-top'] = array(
+    'version' => '1.x',
+    'css' => array(
+      drupal_get_path('module', 'cookieconsent') . '/css/light-top.css' => array(),
+    ),
+  );
+
+  return $libraries;
+}
+
+/**
  * Implements hook_page_attachments().
  */
 function cookieconsent_page_attachments(array &$attachments) {
