@@ -58,6 +58,57 @@ function cookieconsent_menu() {
 }
 
 /**
+ * Implements hook_variable_group_info().
+ */
+function cookieconsent_variable_group_info() {
+  $groups = array();
+
+  $groups['cookieconsent'] = array(
+    'title' => t('CookieConsent'),
+    'description' => t('Settings for CookieConsent'),
+    'access' => 'administer cookieconsent settings',
+    'path' => array('admin/config/system/cookieconsent'),
+  );
+
+  return $groups;
+}
+
+/**
+ * Implements hook_variable_info().
+ */
+function cookieconsent_variable_info($options) {
+  $variables = array();
+
+  $variables['cookieconsent_headline_text'] = array(
+    'type' => 'string',
+    'group' => 'cookieconsent',
+    'title' => t('Headline Text', array(), $options),
+    'description' => t('The message shown by the plugin.', array(), $options),
+    'default' => 'This website uses cookies to ensure you get the best experience on our website',
+    'localize' => TRUE,
+  );
+
+  $variables['cookieconsent_accept_button_text'] = array(
+    'type' => 'string',
+    'group' => 'cookieconsent',
+    'title' => t('Accept button text', array(), $options),
+    'default' => 'Got it!',
+    'localize' => TRUE,
+  );
+
+  $variables['cookieconsent_read_more_button_text'] = array(
+    'type' => 'string',
+    'group' => 'cookieconsent',
+    'title' => t('Read more button text', array(), $options),
+    'description' => t('The text shown on the link to the cookie policy (requires the Cookie policy option to also be set)', array(), $options),
+    'default' => 'More info',
+    'localize' => TRUE,
+  );
+
+  return $variables;
+}
+
+/**
  * Implements hook_theme().
  */
 function cookieconsent_theme($existing, $type, $theme, $path) {
