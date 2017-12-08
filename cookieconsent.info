@@ -1,0 +1,6 @@
+name = CookieConsent
+description = CookieConsent uses the Cookie Consent javascript library for alerting users about the use of cookies on your website
+core = 7.x
+package = Other
+
+configure = admin/config/system/cookieconsent
