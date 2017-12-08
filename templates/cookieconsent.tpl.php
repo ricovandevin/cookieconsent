@@ -15,7 +15,7 @@
  */
 #}
 <div class="cc_banner cc_container cc_container--open">
-    <a href="#null" data-cc-event="click:dismiss" target="_blank" class="cc_btn cc_btn_accept_all">{{ dismiss }}</a>
-    <p class="cc_message">{{message}} <a data-cc-if="options.link" target="{{ target }}" class="cc_more_info" href="{{ link }}">{{ learn_more }}</a></p>
+    <a href="#null" data-cc-event="click:dismiss" target="_blank" class="cc_btn cc_btn_accept_all"><?php print $dismiss; ?></a>
+    <p class="cc_message"><?php print $message; ?> <a data-cc-if="options.link" target="<?php print $target; ?>" class="cc_more_info" href="<?php print $link; ?>"><?php print $learn_more; ?></a></p>
     <a class="cc_logo" target="_blank" href="http://silktide.com/cookieconsent">Cookie Consent plugin for the EU cookie law</a>
 </div>
