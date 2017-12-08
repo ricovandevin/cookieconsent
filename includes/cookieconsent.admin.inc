@@ -95,13 +95,12 @@ function cookieconsent_settings_form($form, &$form_state) {
   );
 
   $form['cookieconsent_cookie_policy'] = array(
-    '#type' => 'entity_autocomplete',
-    '#target_type' => 'node',
-    '#title' => t('Your cookie policy'),
+    '#type' => 'textfield',
+    '#title' => t('Path to your cookie policy'),
     '#description' => t('If you already have a cookie policy, link to it here.'),
     '#maxlength' => 255,
     '#size' => 64,
-    '#default_value' => entity_load('node', variable_get('cookieconsent_cookie_policy')),
+    '#default_value' => variable_get('cookieconsent_cookie_policy'),
   );
 
   $form['cookieconsent_container'] = array(
@@ -123,7 +122,7 @@ function cookieconsent_settings_form($form, &$form_state) {
   );
 
   $form['cookieconsent_expiry'] = array(
-    '#type' => 'number',
+    '#type' => 'textfield',
     '#title' => t('Expiry days'),
     '#description' => t('The number of days Cookie Consent should store the user’s consent information for.'),
     '#maxlength' => 255,
