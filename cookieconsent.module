@@ -214,7 +214,13 @@ function cookieconsent_page_alter(&$page) {
     array('type' => 'external')
   );
 
-  // Add the initialization and configuration JavaScript.
+  // Add the JavaScript behavior.
+  drupal_add_js(
+    drupal_get_path('module', 'cookieconsent') . '/js/cookieconsent.js',
+    'file'
+  );
+
+  // Add the JavaScript configuration.
   $config = array();
   $palette = array();
   if (variable_get('cookieconsent_popup_background')) {
@@ -239,8 +245,38 @@ function cookieconsent_page_alter(&$page) {
   if (variable_get('cookieconsent_accept_button_text')) {
     $config['content']['allow'] = variable_get('cookieconsent_accept_button_text');
   }
+
+  // Allow other modules to change or add configuration.
+  drupal_alter('cookieconsent_config', $config);
+
   drupal_add_js(
-    'window.addEventListener("load", function(){ window.cookieconsent.initialise(' . json_encode($config) . '); });',
-    array('type' => 'inline')
+    array('cookieConsent' => $config),
+    'setting'
   );
+
+  // Add the actual JavaScript to enable and disable cookies.
+  cookieconsent_add_js();
+}
+
+/**
+ * Adds the JavaScript needed to actually allow or block cookies.
+ *
+ * Modules can add JavaScript by implementing hook_cookieconsent_enable() and/or
+ * hook_cookieconsent_disable().
+ */
+function cookieconsent_add_js() {
+  // Let other modules alter the JavaScript.
+  $enable_js = module_invoke_all('cookieconsent_enable');
+  $disable_js = module_invoke_all('cookieconsent_disable');
+
+  // Add the JavaScript to the DOM.
+  $js = 'Drupal.cookieConsent = {
+    enableCookies: function (status, chosenBefore) {
+      ' . implode('', $enable_js) . '
+    },
+    disableCookies: function (status, chosenBefore) {
+      ' . implode('', $disable_js) . '
+    }
+  };';
+  drupal_add_js($js, array('type' => 'inline'));
 }
